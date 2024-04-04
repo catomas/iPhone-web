@@ -1,11 +1,6 @@
-import {
-  Html,
-  OrbitControls,
-  PerspectiveCamera,
-  View,
-} from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, View } from "@react-three/drei";
 import Lights from "./Lights";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import IPhone from "./IPhone";
 import * as THREE from "three";
 import { Loader } from "./Loader";
@@ -19,6 +14,12 @@ export const ModelView = ({
   item,
   size,
 }) => {
+  const [isInMobile, setIsInMobile] = useState(false);
+
+  useEffect(() => {
+    setIsInMobile(window.innerWidth < 768);
+  }, [isInMobile, window.innerWidth]);
+
   return (
     <View
       index={index}
@@ -32,17 +33,19 @@ export const ModelView = ({
       <PerspectiveCamera makeDefault position={[0, 0, 4]} />
 
       <Lights />
-      <OrbitControls
-        makeDefault
-        ref={controlRef}
-        enableZoom={false}
-        enablePan={false}
-        rotateSpeed={0.4}
-        target={new THREE.Vector3(0, 0, 0)}
-        onEnd={(e) => {
-          setRotationState(controlRef.current.getAzimuthalAngle());
-        }}
-      />
+      {!isInMobile && (
+        <OrbitControls
+          makeDefault
+          ref={controlRef}
+          enableZoom={false}
+          enablePan={false}
+          rotateSpeed={0.4}
+          target={new THREE.Vector3(0, 0, 0)}
+          onEnd={(e) => {
+            setRotationState(controlRef.current.getAzimuthalAngle());
+          }}
+        />
+      )}
 
       <group
         ref={groupRef}
